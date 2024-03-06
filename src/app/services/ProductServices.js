@@ -1,31 +1,23 @@
 const Product = require('../models/ProductModel');
 
 //[POST] /create
-const createProduct = (newUser) => {
+const createProduct = (newProduct) => {
   return new Promise(async (resolve, reject) => {
-    const { name, username, email, password, phone } = newUser;
-
+    const { name } = newProduct;
     try {
-      const checkUser = await User.findOne({ email: email });
-      if (checkUser !== null) {
+      const checkProduct = await Product.findOne({ name: name });
+      if (checkProduct !== null) {
         resolve({
           status: 'OK',
-          message: 'The email is already',
+          message: 'The name is already',
         });
       }
-      const hashPassword = bcrypt.hashSync(password, 10);
-      const createdUser = await User.create({
-        name,
-        username,
-        email,
-        password: hashPassword,
-        phone,
-      });
-      if (createdUser) {
+      const createdProduct = await Product.create(newProduct);
+      if (createdProduct) {
         resolve({
           status: 'OK',
           message: 'Success',
-          data: createdUser,
+          data: createdProduct,
         });
       }
     } catch (error) {
@@ -34,30 +26,25 @@ const createProduct = (newUser) => {
   });
 };
 
-//[PUT] /update-product/:id
-const updateProduct = (userId, data) => {
+//[PUT] /update/:id
+const updateProduct = (productId, data) => {
+  console.log(productId);
   return new Promise(async (resolve, reject) => {
     try {
-      const checkUser = await User.findById(userId);
-      if (checkUser === null) {
-        //check user is existing
+      const checkProduct = await Product.findById(productId);
+      if (checkProduct === null) {
+        //check product is existing
         resolve({
           status: 'OK',
-          message: 'The user is not exist',
+          message: 'The product is not exist',
         });
       }
-      const password = data.password;
-      const hashPassword = bcrypt.hashSync(password, 10);
-      const userUpdated = await User.findByIdAndUpdate(
-        userId,
-        { data, password: hashPassword },
-        { new: true },
-      );
+      const productUpdated = await Product.findByIdAndUpdate(productId, data, { new: true });
       resolve({
         //OK? => return data
         status: 'OK',
         message: 'Success',
-        data: userUpdated,
+        data: productUpdated,
       });
     } catch (error) {
       reject(error);
@@ -65,20 +52,44 @@ const updateProduct = (userId, data) => {
   });
 };
 
-//[DELETE] /delete-product/:id
-const deleteProduct = (userId) => {
-  // console.log(userId);
+//[DELETE] /delete/:id
+const deleteProduct = (productId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const checkUser = await User.findById(userId);
-      if (checkUser === null) {
-        //check user is existing
+      const checkProduct = await Product.findById(productId);
+      if (checkProduct === null) {
+        //check product is existing
         resolve({
           status: 'OK',
-          message: 'The user is not exist',
+          message: 'The product is not exist',
         });
       }
-      await User.findByIdAndDelete({ _id: userId });
+      await Product.findByIdAndDelete({ _id: productId });
+      resolve({
+        //OK? => return data
+        status: 'OK',
+        message: 'Delete success',
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+//[DELETE] /delete-many
+const deleteManyProduct = (productIds) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkProduct = await Product.find({ _id: productIds });
+      console.log(checkProduct);
+      if (checkProduct.length === 0) {
+        //check product is existing
+        resolve({
+          status: 'OK',
+          message: 'The product is not exist',
+        });
+      }
+      await Product.deleteMany({ _id: { $in: productIds } });
       resolve({
         //OK? => return data
         status: 'OK',
@@ -94,16 +105,14 @@ const deleteProduct = (userId) => {
 const getAllProducts = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      // const userAlls = await User.find({});
-      // const totalUsers = await User.countDocuments();
-      Promise.all([User.find({}), User.countDocuments()])
-        .then(([userAlls, totalUsers]) => {
+      Promise.all([Product.find({}), Product.countDocuments()])
+        .then(([productAlls, totalProducts]) => {
           resolve({
             //OK? => return data
             status: 'OK',
-            message: 'Get all users is success',
-            totalUsers,
-            data: userAlls,
+            message: 'Get all products is success',
+            totalProducts,
+            data: productAlls,
           });
         })
         .catch((err) => {
@@ -118,22 +127,22 @@ const getAllProducts = () => {
   });
 };
 
-//[GET] /get-detail-product
-const getDetailProduct = (userId) => {
+//[GET] /get-detail
+const getDetailProduct = (productId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const user = await User.findOne({ _id: userId });
-      if (user === null) {
+      const product = await Product.findOne({ _id: productId });
+      if (product === null) {
         resolve({
           status: 'OK',
-          message: 'User is not exist',
+          message: 'Product is not exist',
         });
       }
       resolve({
         //OK? => return data
         status: 'OK',
-        message: 'Get user is success',
-        data: user,
+        message: 'Get product is success',
+        data: product,
       });
     } catch (error) {
       reject(error);
@@ -145,6 +154,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  deleteManyProduct,
   getAllProducts,
   getDetailProduct,
 };

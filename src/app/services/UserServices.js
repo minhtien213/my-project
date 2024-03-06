@@ -95,7 +95,7 @@ const updateUser = (userId, data) => {
       const hashPassword = bcrypt.hashSync(password, 10);
       const userUpdated = await User.findByIdAndUpdate(
         userId,
-        { data, password: hashPassword },
+        { ...data, password: hashPassword },
         { new: true },
       );
       resolve({
@@ -139,8 +139,6 @@ const deleteUser = (userId) => {
 const getAllUsers = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      // const userAlls = await User.find({});
-      // const totalUsers = await User.countDocuments();
       Promise.all([User.find({}), User.countDocuments()])
         .then(([userAlls, totalUsers]) => {
           resolve({

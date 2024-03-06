@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema(
         image: { type: String, required: true },
         price: { type: Number, required: true },
         product: {
-          tykpe: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: 'Product',
           required: true,
         },
@@ -36,5 +36,5 @@ const orderSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-const Order = mongoose.model('Product', orderSchema);
+const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

@@ -34,10 +34,10 @@ const createUser = async (req, res) => {
 //[POST] /sign-in
 const loginUser = async (req, res) => {
   try {
-    const { name, username, email, password, confirmPassword, phone } = req.body;
+    const { email, password } = req.body;
     const regexEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
     const isEmail = regexEmail.test(email);
-    if (!name || !username || !email || !password || !confirmPassword || !phone) {
+    if (!email || !password) {
       return res.status(200).json({
         status: 'ERR',
         message: 'The input is required',
@@ -46,11 +46,6 @@ const loginUser = async (req, res) => {
       return res.status(200).json({
         status: 'ERR',
         message: 'The input is email',
-      });
-    } else if (password !== confirmPassword) {
-      return res.status(200).json({
-        status: 'ERR',
-        message: 'The password is equal confirmPassword',
       });
     }
     const response = await UserServices.loginUser(req.body);
@@ -67,6 +62,7 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const data = req.body;
+    // console.log(userId, data);
     if (!userId) {
       return res.status(200).json({
         status: 'ERR',

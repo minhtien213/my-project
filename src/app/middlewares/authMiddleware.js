@@ -25,7 +25,6 @@ const authUserMiddleware = (req, res, next) => {
   const token = req.headers.token.split(' ')[1]; //['beare','token']
   const user = jwt.verify(token, process.env.ACCESS_TOKEN);
   const { payload } = user;
-  console.log(payload);
   if (payload?.isAdmin || payload?.id === userId) {
     //nếu là admin or chính user login
     //thêm ? sau payload để không lỗi nếu không có token
