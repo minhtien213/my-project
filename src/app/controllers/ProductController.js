@@ -55,7 +55,8 @@ const deleteManyProduct = async (req, res) => {
 //[GET] /get-all
 const getAllProducts = async (req, res) => {
   try {
-    const response = await ProductServices.getAllProducts();
+    const { sort_field, sort_type, search_field, search, page } = req.query;
+    const response = await ProductServices.getAllProducts(req.query);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({

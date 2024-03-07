@@ -102,25 +102,64 @@ const deleteManyProduct = (productIds) => {
 };
 
 //[GET] /get-all-products
-const getAllProducts = () => {
+const getAllProducts = (queryData) => {
+  const { sort_field = 'name', sort_type = 'asc', search_field, search, page = 1 } = queryData;
+  const pageSize = 3;
+
+  // Tìm kiếm không phân biệt chữ hoa/chữ thường với $regex và tùy chọn 'i'
+  const regex = new RegExp(search, 'i');
+
   return new Promise(async (resolve, reject) => {
     try {
-      Promise.all([Product.find({}), Product.countDocuments()])
-        .then(([productAlls, totalProducts]) => {
-          resolve({
-            //OK? => return data
-            status: 'OK',
-            message: 'Get all products is success',
-            totalProducts,
-            data: productAlls,
+      if (search_field && search) {
+        Promise.all([
+          Product.find({ [search_field]: { $regex: regex } })
+            .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize),
+          Product.countDocuments({ [search_field]: { $regex: regex } }),
+        ])
+          .then(([productAlls, totalProducts]) => {
+            resolve({
+              //OK? => return data
+              status: 'OK',
+              message: 'Get products is success',
+              totalProducts,
+              totalPages: Math.ceil(totalProducts / pageSize),
+              data: productAlls,
+            });
+          })
+          .catch((err) => {
+            return res.status(404).json({
+              status: 'ERR',
+              message: 'Error',
+            });
           });
-        })
-        .catch((err) => {
-          return res.status(404).json({
-            status: 'ERR',
-            message: 'Error',
+      } else {
+        Promise.all([
+          Product.find({})
+            .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize),
+          Product.countDocuments({}),
+        ])
+          .then(([productAlls, totalProducts]) => {
+            resolve({
+              //OK? => return data
+              status: 'OK',
+              message: 'Get products is success',
+              totalProducts,
+              totalPages: Math.ceil(totalProducts / pageSize),
+              data: productAlls,
+            });
+          })
+          .catch((err) => {
+            return res.status(404).json({
+              status: 'ERR',
+              message: 'Error',
+            });
           });
-        });
+      }
     } catch (error) {
       reject(error);
     }
