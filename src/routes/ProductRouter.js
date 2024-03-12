@@ -7,7 +7,7 @@ router.post('/create', authMiddleware, productController.createProduct);
 router.put('/update/:id', authMiddleware, productController.updateProduct);
 router.delete('/delete/:id', authMiddleware, productController.deleteProduct);
 router.delete('/delete-many', authMiddleware, productController.deleteManyProduct);
-router.get('/get-all', authMiddleware, productController.getAllProducts);
-router.get('/get-detail/:id', authUserMiddleware, productController.getDetailProduct);
+router.get('/get-all', productController.getAllProducts);
+router.get('/get-detail/:id', productController.getDetailProduct);
 
 module.exports = router;

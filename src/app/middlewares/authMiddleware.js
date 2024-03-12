@@ -7,8 +7,7 @@ dotenv.config();
 const authMiddleware = (req, res, next) => {
   const token = req.headers.token.split(' ')[1]; //['beare','token']
   const user = jwt.verify(token, process.env.ACCESS_TOKEN);
-  const { payload } = user;
-  if (payload?.isAdmin) {
+  if (user?.isAdmin) {
     //thêm ? sau payload để không lỗi nếu không có token
     next();
   } else {
@@ -24,8 +23,8 @@ const authUserMiddleware = (req, res, next) => {
   const userId = req.params.id;
   const token = req.headers.token.split(' ')[1]; //['beare','token']
   const user = jwt.verify(token, process.env.ACCESS_TOKEN);
-  const { payload } = user;
-  if (payload?.isAdmin || payload?.id === userId) {
+  console.log(user, token)
+  if (user?.isAdmin || user?.id === userId) {
     //nếu là admin or chính user login
     //thêm ? sau payload để không lỗi nếu không có token
     next();

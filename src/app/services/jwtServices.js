@@ -3,14 +3,14 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const createAccessToken = async (payload) => {
-  const accessToken = jwt.sign({ payload }, process.env.ACCESS_TOKEN, {
+  const access_token = jwt.sign({ ...payload }, process.env.ACCESS_TOKEN, {
     expiresIn: '1h',
   });
-  return accessToken;
+  return access_token;
 };
 
 const createRefreshToken = async (payload) => {
-  const refreshToken = jwt.sign({ payload }, process.env.REFRESH_TOKEN, {
+  const refreshToken = jwt.sign({ ...payload }, process.env.REFRESH_TOKEN, {
     expiresIn: '365d',
   });
   return refreshToken;

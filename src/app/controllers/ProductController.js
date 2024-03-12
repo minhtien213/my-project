@@ -2,9 +2,9 @@ const ProductServices = require('../services/ProductServices');
 
 //[POST] /create
 const createProduct = async (req, res) => {
-  const { name, images, type, price, quantity, rating, description } = req.body;
+  const { name, images, type, brand, price, quantity, rating, description } = req.body;
   try {
-    if (!name || !images || !type || !price || !quantity || !rating || !description) {
+    if (!name || !images || !type || !brand || !price || !quantity || !rating || !description) {
       return res.status(200).json({ status: 'ERR', message: 'The input is required' });
     }
     const response = await ProductServices.createProduct(req.body);
@@ -20,7 +20,7 @@ const updateProduct = async (req, res) => {
   try {
     const { name, images, type, price, quantity, rating, description } = req.body;
     const data = req.body;
-    if (!name || !images || !type || !price || !quantity || !rating || !description) {
+    if (!name || !images || !type || !brand || !price || !quantity || !rating || !description) {
       return res.status(200).json({ status: 'ERR', message: 'The input is required' });
     }
     const response = await ProductServices.updateProduct(productId, data);

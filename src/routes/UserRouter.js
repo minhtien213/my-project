@@ -7,7 +7,7 @@ router.post('/sign-up', userController.createUser);
 router.post('/sign-in', userController.loginUser);
 router.put('/update-user/:id', authUserMiddleware, userController.updateUser);
 router.delete('/delete-user/:id', userController.deleteUser);
-router.get('/get-all-users', authMiddleware, userController.getAllUsers);
-router.get('/get-detail-user/:id', authUserMiddleware, userController.getDetailUser);
+router.get('/get-all', authMiddleware, userController.getAllUsers);
+router.get('/get-detail/:id', authUserMiddleware, userController.getDetailUser);
 
 module.exports = router;

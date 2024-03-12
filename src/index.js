@@ -2,6 +2,8 @@ const express = require('express');
 const db = require('./config/db');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -11,10 +13,12 @@ db.connect();
 const app = express();
 const port = process.env.PORT || 3001;
 
+// Sử dụng middleware
 app.use(bodyParser.json());
+app.use(cors());
+app.use(cookieParser());
 
 routes(app);
-
 
 app.get('/', (req, res) => {
   res.send('Welcome everyone');

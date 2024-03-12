@@ -103,7 +103,13 @@ const deleteManyProduct = (productIds) => {
 
 //[GET] /get-all-products
 const getAllProducts = (queryData) => {
-  const { sort_field = 'name', sort_type = 'asc', search_field, search, page = 1 } = queryData;
+  const {
+    sort_field = 'name',
+    sort_type = 'asc',
+    search_field = 'name',
+    search,
+    page = 1,
+  } = queryData;
   const pageSize = 3;
 
   // Tìm kiếm không phân biệt chữ hoa/chữ thường với $regex và tùy chọn 'i'

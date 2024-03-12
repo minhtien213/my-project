@@ -5,23 +5,21 @@ const { createAccessToken, createRefreshToken } = require('./jwtServices');
 //[POST] /sign-up
 const createUser = (newUser) => {
   return new Promise(async (resolve, reject) => {
-    const { name, username, email, password, phone } = newUser;
+    const { name, email, password } = newUser;
 
     try {
       const checkUser = await User.findOne({ email: email });
       if (checkUser !== null) {
         resolve({
-          status: 'OK',
-          message: 'The email is already',
+          status: 'ERR',
+          message: 'Email đã tồn tại trong hệ thống',
         });
       }
       const hashPassword = bcrypt.hashSync(password, 10);
       const createdUser = await User.create({
         name,
-        username,
         email,
         password: hashPassword,
-        phone,
       });
       if (createdUser) {
         resolve({
@@ -46,19 +44,19 @@ const loginUser = (userLogin) => {
       if (checkUser === null) {
         //check user is existing
         resolve({
-          status: 'OK',
-          message: 'The user is not exist',
+          status: 'ERR',
+          message: 'Tài khoản không tồn tại',
         });
       }
       const comparePassword = bcrypt.compareSync(password, checkUser.password);
       if (!comparePassword) {
         //check password is correct
         resolve({
-          status: 'OK',
-          message: 'The user or password is incorrect',
+          status: 'ERR',
+          message: 'Tài khoản hoặc mật khẩu không chính xác',
         });
       }
-      const accessToken = await createAccessToken({
+      const access_token = await createAccessToken({
         id: checkUser._id,
         isAdmin: checkUser.isAdmin,
       });
@@ -70,7 +68,7 @@ const loginUser = (userLogin) => {
         //OK? => return data
         status: 'OK',
         message: 'Success',
-        accessToken,
+        access_token,
         refreshToken,
       });
     } catch (error) {
@@ -135,7 +133,7 @@ const deleteUser = (userId) => {
   });
 };
 
-//[GET] /get-all-users
+//[GET] /get-all
 const getAllUsers = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -161,7 +159,7 @@ const getAllUsers = () => {
   });
 };
 
-//[GET] /get-detail-user
+//[GET] /get-detail/:id
 const getDetailUser = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {

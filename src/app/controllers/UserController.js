@@ -3,26 +3,26 @@ const UserServices = require('../services/UserServices');
 //[POST] /sign-up
 const createUser = async (req, res) => {
   try {
-    const { name, username, email, password, confirmPassword, phone } = req.body;
+    const { name, email, password, passwordConfirm } = req.body.data_register;
     const regexEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
     const isEmail = regexEmail.test(email);
-    if (!name || !username || !email || !password || !confirmPassword || !phone) {
+    if (!name || !email || !password || !passwordConfirm) {
       return res.status(200).json({
         status: 'ERR',
-        message: 'The input is required',
+        message: 'Nhập thông tin để đăng kí',
       });
     } else if (!isEmail) {
       return res.status(200).json({
         status: 'ERR',
-        message: 'The input is email',
+        message: 'Email không đúng định dạng',
       });
-    } else if (password !== confirmPassword) {
+    } else if (password !== passwordConfirm) {
       return res.status(200).json({
         status: 'ERR',
-        message: 'The password is equal confirmPassword',
+        message: 'Mật khẩu không khớp',
       });
     }
-    const response = await UserServices.createUser(req.body);
+    const response = await UserServices.createUser(req.body.data_register);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -40,16 +40,18 @@ const loginUser = async (req, res) => {
     if (!email || !password) {
       return res.status(200).json({
         status: 'ERR',
-        message: 'The input is required',
+        message: 'Nhập thông tin để đăng nhập',
       });
     } else if (!isEmail) {
       return res.status(200).json({
         status: 'ERR',
-        message: 'The input is email',
+        message: 'Email không đúng định dạng',
       });
     }
     const response = await UserServices.loginUser(req.body);
-    return res.status(200).json(response);
+    const { refreshToken, ...newResponse } = response;
+    res.cookie('refreshToken', refreshToken, { HttpOnly: true, Secure: true });
+    return res.status(200).json(newResponse);
   } catch (error) {
     return res.status(404).json({
       message: error,
@@ -97,7 +99,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-//[GET] /get-all-users
+//[GET] /get-all
 const getAllUsers = async (req, res) => {
   try {
     const response = await UserServices.getAllUsers();
@@ -109,7 +111,7 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-//[GET] /get-detail-user
+//[GET] /get-detail/:id
 const getDetailUser = async (req, res) => {
   try {
     const userId = req.params.id;
