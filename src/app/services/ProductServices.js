@@ -28,7 +28,6 @@ const createProduct = (newProduct) => {
 
 //[PUT] /update/:id
 const updateProduct = (productId, data) => {
-  console.log(productId);
   return new Promise(async (resolve, reject) => {
     try {
       const checkProduct = await Product.findById(productId);
@@ -81,7 +80,6 @@ const deleteManyProduct = (productIds) => {
   return new Promise(async (resolve, reject) => {
     try {
       const checkProduct = await Product.find({ _id: productIds });
-      console.log(checkProduct);
       if (checkProduct.length === 0) {
         //check product is existing
         resolve({
@@ -101,17 +99,16 @@ const deleteManyProduct = (productIds) => {
   });
 };
 
-//[GET] /get-all-products
+//[GET] /get-all
 const getAllProducts = (queryData) => {
   const {
     sort_field = 'name',
     sort_type = 'asc',
     search_field = 'name',
     search,
-    page = 1,
+    pageCurrent = 1,
+    pageSize = 3,
   } = queryData;
-  const pageSize = 3;
-
   // Tìm kiếm không phân biệt chữ hoa/chữ thường với $regex và tùy chọn 'i'
   const regex = new RegExp(search, 'i');
 
@@ -121,7 +118,7 @@ const getAllProducts = (queryData) => {
         Promise.all([
           Product.find({ [search_field]: { $regex: regex } })
             .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
-            .skip((page - 1) * pageSize)
+            .skip((pageCurrent - 1) * pageSize)
             .limit(pageSize),
           Product.countDocuments({ [search_field]: { $regex: regex } }),
         ])
@@ -132,6 +129,7 @@ const getAllProducts = (queryData) => {
               message: 'Get products is success',
               totalProducts,
               totalPages: Math.ceil(totalProducts / pageSize),
+              pageCurrent,
               data: productAlls,
             });
           })
@@ -172,6 +170,57 @@ const getAllProducts = (queryData) => {
   });
 };
 
+//[GET] /filter
+const filterProducts = (queryData) => {
+  // const {
+  //   sort_field = 'name',
+  //   sort_type = 'asc',
+  //   search_fields = [], // Khởi tạo một mảng rỗng để lưu các cặp trường tìm kiếm
+  //   pageCurrent = 1,
+  //   pageSize = 3,
+  // } = queryData;
+
+  // const searchConditions = [];
+
+  // // Xử lý mỗi cặp trường và giá trị tìm kiếm tương ứng
+  // for (let i = 0; i < search_fields.length; i += 2) {
+  //   const searchField = search_fields[i];
+  //   const searchValue = search_fields[i + 1];
+  //   const condition = { [searchField]: { $regex: new RegExp(searchValue, 'i') } };
+  //   searchConditions.push(condition);
+  // }
+
+  // return new Promise(async (resolve, reject) => {
+  //   try {
+  //     Promise.all([
+  //       Product.find({ $and: searchConditions }) // Sử dụng $and để đảm bảo tất cả các điều kiện đều phải đúng
+  //         .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
+  //         .skip((pageCurrent - 1) * pageSize)
+  //         .limit(pageSize),
+  //       Product.countDocuments({ $and: searchConditions }),
+  //     ])
+  //       .then(([productAlls, totalProducts]) => {
+  //         resolve({
+  //           status: 'OK',
+  //           message: 'Get products is success',
+  //           totalProducts,
+  //           totalPages: Math.ceil(totalProducts / pageSize),
+  //           pageCurrent,
+  //           data: productAlls,
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         return res.status(404).json({
+  //           status: 'ERR',
+  //           message: 'Error',
+  //         });
+  //       });
+  //   } catch (error) {
+  //     reject(error);
+  //   }
+  // });
+};
+
 //[GET] /get-detail
 const getDetailProduct = (productId) => {
   return new Promise(async (resolve, reject) => {
@@ -201,5 +250,6 @@ module.exports = {
   deleteProduct,
   deleteManyProduct,
   getAllProducts,
+  filterProducts,
   getDetailProduct,
 };

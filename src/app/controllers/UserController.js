@@ -1,4 +1,5 @@
 const UserServices = require('../services/UserServices');
+const User = require('../models/UserModel');
 
 //[POST] /sign-up
 const createUser = async (req, res) => {
@@ -64,7 +65,20 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
     const data = req.body;
-    // console.log(userId, data);
+    const { name, email } = req.body;
+    const regexEmail = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    const isEmail = regexEmail.test(email);
+    if (!name || !email) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Tên và Email không được để trống',
+      });
+    } else if (!isEmail) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Email không đúng định dạng',
+      });
+    }
     if (!userId) {
       return res.status(200).json({
         status: 'ERR',
@@ -72,6 +86,71 @@ const updateUser = async (req, res) => {
       });
     }
     const response = await UserServices.updateUser(userId, data);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
+//[PUT] /update-user/password/:id
+const updatePassword = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const data = req.body;
+    const { password, newPassword, passwordConfirm } = req.body;
+    if (!newPassword || !password || !passwordConfirm) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Không được để trống',
+      });
+    } else if (newPassword !== passwordConfirm) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Mật khẩu không khớp',
+      });
+    }
+    const response = await UserServices.updatePassword(userId, data);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
+//[PUT] /reset-password
+const resetPassword = async (req, res) => {
+  try {
+    const data = req.body;
+    const { email, newPassword, passwordConfirm } = req.body;
+    if (!email) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Nhập email để tìm kiếm tài khoản',
+      });
+    }
+    const checkUser = await User.findOne({ email: email });
+    if (checkUser === null) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Tài khoản không tồn tại',
+      });
+    }
+
+    if (!email || !newPassword || !passwordConfirm) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Không được để trống',
+      });
+    } else if (newPassword !== passwordConfirm) {
+      return res.status(200).json({
+        status: 'ERR',
+        message: 'Mật khẩu không khớp',
+      });
+    }
+    const response = await UserServices.resetPassword(data);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -134,6 +213,8 @@ module.exports = {
   createUser,
   loginUser,
   updateUser,
+  updatePassword,
+  resetPassword,
   deleteUser,
   getAllUsers,
   getDetailUser,

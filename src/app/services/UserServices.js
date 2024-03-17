@@ -24,7 +24,7 @@ const createUser = (newUser) => {
       if (createdUser) {
         resolve({
           status: 'OK',
-          message: 'Success',
+          message: 'Đăng kí thành công!',
           data: createdUser,
         });
       }
@@ -79,6 +79,7 @@ const loginUser = (userLogin) => {
 
 //[PUT] /update-user/:id
 const updateUser = (userId, data) => {
+  // console.log(userId, data);
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.findById(userId);
@@ -86,20 +87,87 @@ const updateUser = (userId, data) => {
         //check user is existing
         resolve({
           status: 'OK',
-          message: 'The user is not exist',
+          message: 'Tài khoản không tồn tại',
         });
       }
-      const password = data.password;
-      const hashPassword = bcrypt.hashSync(password, 10);
+      // const password = data.password;
+      // const hashPassword = bcrypt.hashSync(password, 10);
       const userUpdated = await User.findByIdAndUpdate(
         userId,
-        { ...data, password: hashPassword },
+        // { ...data, password: hashPassword },
+        data,
         { new: true },
       );
       resolve({
         //OK? => return data
         status: 'OK',
-        message: 'Success',
+        message: 'Cập nhật thông tin thành công',
+        data: userUpdated,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+//[PUT] /update-user/password/:id
+const updatePassword = (userId, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkUser = await User.findById(userId);
+      if (checkUser === null) {
+        //check user is existing
+        resolve({
+          status: 'ERR',
+          message: 'Tài khoản không tồn tại',
+        });
+      }
+
+      const comparePassword = bcrypt.compareSync(data.password, checkUser.password);
+      if (!comparePassword) {
+        resolve({
+          status: 'ERR',
+          message: 'Mật khẩu cũ không chính xác',
+        });
+      }
+      const password = data.newPassword;
+      const hashPassword = bcrypt.hashSync(password, 10);
+      const userUpdated = await User.findByIdAndUpdate(
+        userId,
+        { password: hashPassword },
+        {
+          new: true,
+        },
+      );
+      resolve({
+        //OK? => return data
+        status: 'OK',
+        message: 'Thay đổi mật khẩu thành công',
+        data: userUpdated,
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+//[PUT] /reset-password
+const resetPassword = (data) => {
+  const { email, newPassword } = data;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const hashPassword = bcrypt.hashSync(newPassword, 10);
+      const userUpdated = await User.findOneAndUpdate(
+        { email: email },
+        { password: hashPassword },
+        {
+          new: true,
+        },
+      );
+      resolve({
+        //OK? => return data
+        status: 'OK',
+        message: 'Khôi phục mật khẩu thành công',
         data: userUpdated,
       });
     } catch (error) {
@@ -110,7 +178,6 @@ const updateUser = (userId, data) => {
 
 //[DELETE] /delete-user/:id
 const deleteUser = (userId) => {
-  // console.log(userId);
   return new Promise(async (resolve, reject) => {
     try {
       const checkUser = await User.findById(userId);
@@ -186,6 +253,8 @@ module.exports = {
   createUser,
   loginUser,
   updateUser,
+  updatePassword,
+  resetPassword,
   deleteUser,
   getAllUsers,
   getDetailUser,
