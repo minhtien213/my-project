@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const db = require('./config/db');
 const routes = require('./routes');
 const bodyParser = require('body-parser');
@@ -17,6 +18,7 @@ const port = process.env.PORT || 3001;
 app.use(bodyParser.json());
 app.use(cors());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 routes(app);
 

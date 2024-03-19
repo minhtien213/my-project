@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: 'boolean', default: false, required: true },
     phone: { type: String, default: '' },
     email: { type: String, required: true, unique: true },
-    image: { type: String, default: '' },
+    images: [{ type: String, default: '' }],
     address: { type: String, default: '' },
     access_token: { type: String },
     refresh_token: { type: String },

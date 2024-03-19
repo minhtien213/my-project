@@ -94,8 +94,22 @@ const updateUser = async (req, res) => {
   }
 };
 
-//[PUT] /update-user/password/:id
-const updatePassword = async (req, res) => {
+//[PUT] /update-avatar/:id
+const updateAvatar = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const file = req.files[0].path.replace(/\\/g, '/');
+    const response = await UserServices.updateAvatar(userId, file);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
+//[PUT] /change-password/:id
+const changePassword = async (req, res) => {
   try {
     const userId = req.params.id;
     const data = req.body;
@@ -111,7 +125,7 @@ const updatePassword = async (req, res) => {
         message: 'Mật khẩu không khớp',
       });
     }
-    const response = await UserServices.updatePassword(userId, data);
+    const response = await UserServices.changePassword(userId, data);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -213,7 +227,8 @@ module.exports = {
   createUser,
   loginUser,
   updateUser,
-  updatePassword,
+  updateAvatar,
+  changePassword,
   resetPassword,
   deleteUser,
   getAllUsers,
