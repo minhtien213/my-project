@@ -98,7 +98,7 @@ const updateUser = async (req, res) => {
 const updateAvatar = async (req, res) => {
   try {
     const userId = req.params.id;
-    const file = req.files[0].path.replace(/\\/g, '/');
+    const file = req.files[0].path.replace(/\\/g, '/').replace('src/public', '..');
     const response = await UserServices.updateAvatar(userId, file);
     return res.status(200).json(response);
   } catch (error) {

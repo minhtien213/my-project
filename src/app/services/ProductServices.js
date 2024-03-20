@@ -222,13 +222,13 @@ const filterProducts = (queryData) => {
 };
 
 //[GET] /get-detail
-const getDetailProduct = (productId) => {
+const getDetailProduct = (productName) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product = await Product.findOne({ _id: productId });
+      const product = await Product.findOne({ name: productName });
       if (product === null) {
         resolve({
-          status: 'OK',
+          status: 'ERR',
           message: 'Product is not exist',
         });
       }
