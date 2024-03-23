@@ -223,6 +223,28 @@ const getDetailUser = async (req, res) => {
   }
 };
 
+//[PUT] /user/add-cart
+const addCart = async (req, res) => {
+  try {
+    const { userId, ...data_add_cart } = req.body;
+    const response = await UserServices.addCart(userId, data_add_cart);
+    res.json(response);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//[DELETE] /user/remove-cart
+const removeCartItem = async (req, res) => {
+  try {
+    const { userId, cartItemId } = req.body;
+    const response = await UserServices.removeCartItem(userId, cartItemId);
+    res.json(response);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -233,4 +255,6 @@ module.exports = {
   deleteUser,
   getAllUsers,
   getDetailUser,
+  addCart,
+  removeCartItem,
 };

@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/UserModel');
 const { createAccessToken, createRefreshToken } = require('./jwtServices');
+const { trusted } = require('mongoose');
 
 //[POST] /sign-up
 const createUser = (newUser) => {
@@ -246,7 +247,10 @@ const getAllUsers = () => {
 const getDetailUser = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const user = await User.findOne({ _id: userId });
+      const user = await User.findOne({ _id: userId }).populate({
+        path: 'cart.productId',
+        model: 'Product',
+      });
       if (user === null) {
         resolve({
           status: 'OK',
@@ -265,6 +269,61 @@ const getDetailUser = (userId) => {
   });
 };
 
+//[PUT] /user/add-cart
+const addCart = async (userId, data_add_cart) => {
+  try {
+    // Cập nhật giỏ hàng của người dùng
+    await User.findByIdAndUpdate(userId, { $push: { cart: data_add_cart } });
+
+    // Lấy dữ liệu đã cập nhật và thực hiện populate
+    const addedCart = await User.findById(userId).populate({
+      path: 'cart.productId',
+      model: 'Product',
+    });
+
+    if (addedCart) {
+      return {
+        status: 'OK',
+        message: 'Đã thêm vào giỏ hàng',
+        data: addedCart,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error('Có lỗi xảy ra khi thêm vào giỏ hàng');
+  }
+};
+
+//[DELETE] /user/remove-cart
+const removeCartItem = (userId, cartItemId) => {
+  // console.log(userId, cartItemId);
+  return new Promise(async (resolve, reject) => {
+    try {
+      await User.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { cart: { _id: cartItemId } } },
+        { new: true },
+      );
+      const removedCartItem = await User.findById(userId).populate({
+        path: 'cart.productId',
+        model: 'Product',
+      });
+
+      // console.log(removedCartItem);
+
+      if (removedCartItem) {
+        resolve({
+          status: 'OK',
+          message: 'Đã xóa thành công khỏi giỏ hàng',
+          data: removedCartItem,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -275,4 +334,6 @@ module.exports = {
   deleteUser,
   getAllUsers,
   getDetailUser,
+  addCart,
+  removeCartItem,
 };
