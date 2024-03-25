@@ -90,7 +90,8 @@ const updateUser = (userId, data) => {
           message: 'Tài khoản không tồn tại',
         });
       }
-      const userUpdated = await User.findByIdAndUpdate(userId, data, { new: true });
+      await User.findByIdAndUpdate(userId, data);
+      const userUpdated = await User.findById(userId).populate({ path: 'cart.productId' });
       resolve({
         status: 'OK',
         message: 'Cập nhật thông tin thành công',

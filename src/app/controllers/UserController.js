@@ -97,6 +97,7 @@ const updateUser = async (req, res) => {
 //[PUT] /update-avatar/:id
 const updateAvatar = async (req, res) => {
   try {
+    console.log(req.files);
     const userId = req.params.id;
     const file = req.files[0].path.replace(/\\/g, '/').replace('src/public', '..');
     const response = await UserServices.updateAvatar(userId, file);

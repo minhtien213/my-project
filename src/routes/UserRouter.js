@@ -7,9 +7,9 @@ const { authMiddleware, authUserMiddleware } = require('../app/middlewares/authM
 router.post('/sign-up', userController.createUser);
 router.post('/sign-in', userController.loginUser);
 
-router.put('/update-user/:id', userController.updateUser);
+router.put('/update-user/:id', authUserMiddleware, userController.updateUser);
 router.put('/update-avatar/:id', upload, userController.updateAvatar);
-router.put('/change-password/:id', userController.changePassword);
+router.put('/change-password/:id', authUserMiddleware, userController.changePassword);
 router.put('/reset-password', userController.resetPassword);
 router.put('/add-cart', userController.addCart);
 router.delete('/remove-cart', userController.removeCartItem);
