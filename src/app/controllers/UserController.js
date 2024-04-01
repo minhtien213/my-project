@@ -225,6 +225,7 @@ const getDetailUser = async (req, res) => {
 
 //[PUT] /user/add-cart
 const addCart = async (req, res) => {
+  console.log(req.body)
   try {
     const { userId, ...data_add_cart } = req.body;
     const response = await UserServices.addCart(userId, data_add_cart);

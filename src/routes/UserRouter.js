@@ -12,8 +12,8 @@ router.put('/update-avatar/:id', upload, userController.updateAvatar);
 router.put('/change-password/:id', authUserMiddleware, userController.changePassword);
 router.put('/reset-password', userController.resetPassword);
 router.put('/add-cart', authUserMiddleware, userController.addCart);
-router.delete('/remove-cart', userController.removeCartItem);
 
+router.delete('/remove-cart', userController.removeCartItem);
 router.delete('/delete-user/:id', userController.deleteUser);
 
 router.get('/get-all', authMiddleware, userController.getAllUsers);
