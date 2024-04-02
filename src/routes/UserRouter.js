@@ -8,12 +8,13 @@ router.post('/sign-up', userController.createUser);
 router.post('/sign-in', userController.loginUser);
 
 router.put('/update-user/:id', authUserMiddleware, userController.updateUser);
-router.put('/update-avatar/:id', upload, userController.updateAvatar);
+router.put('/change-password/:id', authUserMiddleware, userController.changePassword);
+router.put('/update-avatar/:id', authUserMiddleware, upload, userController.updateAvatar);
 router.put('/change-password/:id', authUserMiddleware, userController.changePassword);
 router.put('/reset-password', userController.resetPassword);
-router.put('/add-cart', authUserMiddleware, userController.addCart);
+router.put('/add-cart/:id', authUserMiddleware, userController.addCart);
 
-router.delete('/remove-cart', userController.removeCartItem);
+router.delete('/remove-cart/:id/:cartItemId', authUserMiddleware, userController.removeCartItem);
 router.delete('/delete-user/:id', userController.deleteUser);
 
 router.get('/get-all', authMiddleware, userController.getAllUsers);

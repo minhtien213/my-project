@@ -273,10 +273,7 @@ const getDetailUser = (userId) => {
 //[PUT] /user/add-cart
 const addCart = async (userId, data_add_cart) => {
   try {
-    // Cập nhật giỏ hàng của người dùng
     await User.findByIdAndUpdate(userId, { $push: { cart: data_add_cart } });
-
-    // Lấy dữ liệu đã cập nhật và thực hiện populate
     const addedCart = await User.findById(userId).populate({
       path: 'cart.productId',
       model: 'Product',
@@ -297,7 +294,6 @@ const addCart = async (userId, data_add_cart) => {
 
 //[DELETE] /user/remove-cart
 const removeCartItem = (userId, cartItemId) => {
-  // console.log(userId, cartItemId);
   return new Promise(async (resolve, reject) => {
     try {
       await User.findOneAndUpdate(

@@ -223,11 +223,11 @@ const getDetailUser = async (req, res) => {
   }
 };
 
-//[PUT] /user/add-cart
+//[PUT] /user/add-cart/:id
 const addCart = async (req, res) => {
-  console.log(req.body)
+  const userId = req.params.id;
   try {
-    const { userId, ...data_add_cart } = req.body;
+    const data_add_cart = req.body;
     const response = await UserServices.addCart(userId, data_add_cart);
     res.json(response);
   } catch (error) {
@@ -235,10 +235,11 @@ const addCart = async (req, res) => {
   }
 };
 
-//[DELETE] /user/remove-cart
+//[DELETE] /user/remove-cart/:id
 const removeCartItem = async (req, res) => {
+  const userId = req.params.id;
+  const cartItemId = req.params.cartItemId;
   try {
-    const { userId, cartItemId } = req.body;
     const response = await UserServices.removeCartItem(userId, cartItemId);
     res.json(response);
   } catch (error) {
