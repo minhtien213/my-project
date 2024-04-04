@@ -3,31 +3,27 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
-    orderItems: [
+    listOrder: [
       {
-        productId: {
-          type: Schema.Types.ObjectId,
-          ref: 'Product',
-          required: true,
-        },
+        productId: { type: Object, required: true },
         quantity: { type: Number, required: true },
       },
     ],
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 
-    shippingAddress: {
+    shippingInfo: {
       name: { type: String, required: true },
       email: { type: String, required: true },
       phone: { type: String, required: true },
       address: { type: String, required: true },
     },
-    
+
     taxPrice: { type: Number, required: true, default: 0 },
-    shippingPrice: { type: Number, required: true },
+    deliveryCharges: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
     discount: { type: String, default: 0 },
+    note: { type: String, default: '' },
 
-    paymentMethod: { type: String, required: true },
+    paymentMethod: { type: String, required: true, default: 'Tiền mặt' },
     isPaid: { type: Boolean, default: false },
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },
