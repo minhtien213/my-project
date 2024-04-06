@@ -254,7 +254,7 @@ const getDetailUser = (userId) => {
       });
       if (user === null) {
         resolve({
-          status: 'OK',
+          status: 'ERR',
           message: 'User is not exist',
         });
       }

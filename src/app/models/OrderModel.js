@@ -5,25 +5,33 @@ const orderSchema = new Schema(
   {
     listOrder: [
       {
+        // productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
         productId: { type: Object, required: true },
         quantity: { type: Number, required: true },
       },
     ],
 
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+
     shippingInfo: {
       name: { type: String, required: true },
-      email: { type: String, required: true },
       phone: { type: String, required: true },
+      email: { type: String, required: true },
       address: { type: String, required: true },
     },
 
-    taxPrice: { type: Number, required: true, default: 0 },
-    deliveryCharges: { type: Number, required: true },
-    totalPrice: { type: Number, required: true },
-    discount: { type: String, default: 0 },
     note: { type: String, default: '' },
+    discount: { type: Number, default: 0 },
+    deliveryCharges: { type: Number, required: true },
+    taxPrice: { type: Number, required: true, default: 0 },
+    totalPrice: { type: Number, required: true },
 
-    paymentMethod: { type: String, required: true, default: 'Tiền mặt' },
+    paymentMethod: {
+      type: String,
+      required: true,
+      enum: ['Cash', 'Credit Card', 'PayPal'],
+      default: 'Cash',
+    },
     isPaid: { type: Boolean, default: false },
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },

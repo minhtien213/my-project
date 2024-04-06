@@ -1,31 +1,18 @@
 const Order = require('../models/OrderModel');
-const { createAccessToken, createRefreshToken } = require('./jwtServices');
+const EmailServices = require('./EmailServices');
 
-//[POST] /sign-up
-const createOrder = (newOrder) => {
+//[POST] /order/create-order/:id
+const createOrder = (orderData) => {
   return new Promise(async (resolve, reject) => {
-    const { name, email, password } = newOrder;
-
     try {
-      const checkOrder = await Order.findOne({ email: email });
-      if (checkOrder !== null) {
-        resolve({
-          status: 'ERR',
-          message: 'Email đã tồn tại trong hệ thống',
-        });
-      }
-      const hashPassword = bcrypt.hashSync(password, 10);
-      const createdOrder = await Order.create({
-        name,
-        email,
-        password: hashPassword,
-      });
+      const createdOrder = await Order.create(orderData);
       if (createdOrder) {
         resolve({
           status: 'OK',
-          message: 'Đăng kí thành công!',
+          message: 'Thêm đơn hàng thành công!',
           data: createdOrder,
         });
+        EmailServices.sendEmailCreated(createdOrder);
       }
     } catch (error) {
       reject(error);
@@ -109,24 +96,23 @@ const getAllOrders = () => {
 };
 
 //[GET] /get-detail/:id
-const getDetailOrder = (userId) => {
+const getDetailOrder = (orderId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const user = await Order.findOne({ _id: userId }).populate({
-        path: 'cart.productId',
+      const orderDetail = await Order.findOne({ _id: orderId }).populate({
+        path: 'listOrder.productId',
         model: 'Product',
       });
-      if (user === null) {
+      if (orderDetail === null) {
         resolve({
-          status: 'OK',
-          message: 'Order is not exist',
+          status: 'ERR',
+          message: 'Đơn hàng không tồn tại',
         });
       }
       resolve({
-        //OK? => return data
         status: 'OK',
-        message: 'Get user is success',
-        data: user,
+        message: 'Lấy đơn hàng thành công',
+        data: orderDetail,
       });
     } catch (error) {
       reject(error);
