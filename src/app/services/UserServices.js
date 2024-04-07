@@ -272,8 +272,17 @@ const getDetailUser = (userId) => {
 
 //[PUT] /user/add-cart
 const addCart = async (userId, data_add_cart) => {
+  console.log(data_add_cart);
   try {
-    await User.findByIdAndUpdate(userId, { $push: { cart: data_add_cart } });
+    await User.findByIdAndUpdate(userId, {
+      $push: {
+        cart: {
+          ...data_add_cart,
+          color: data_add_cart.selectedColor,
+          memory: data_add_cart.selectedMemory,
+        },
+      },
+    });
     const addedCart = await User.findById(userId).populate({
       path: 'cart.productId',
       model: 'Product',

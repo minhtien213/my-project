@@ -4,7 +4,7 @@ dotenv.config();
 const convert_vnd_type = require('../../utils/convert_vnd_type');
 
 const sendEmailCreated = async (data) => {
-  //   console.log(data);
+  // console.log(data);
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
@@ -24,6 +24,8 @@ const sendEmailCreated = async (data) => {
     tbodyContent += `
       <tr>
         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${order.productId.name}</td>
+        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${order.memory}</td>
+        <td style="border: 1px solid #000; padding: 8px; text-align: center;">${order.color}</td>
         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${price}</td>
         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${order.quantity}</td>
       </tr>
@@ -31,14 +33,17 @@ const sendEmailCreated = async (data) => {
   });
 
   const totalPrice = convert_vnd_type(data.totalPrice);
+  const note = data.note !== '' ? data.note : 'không có lưu ý';
   const htmlContent = `
-    <h3 style="color: #333; text-align: left;">Cảm ơn ${data.shippingInfo.name} đã mua hàng tại MTSHOP.COM.VN</h3>
-    <h4 style="color: #555; text-align: left; text-transform: uppercase; font-weight: bold;">Mã đơn hàng: ${data._id}</h4>
-    <h4 style="color: #555; text-align: center;">Danh sách sản phẩm</h4>
-    <table style="border-collapse: collapse; width: 90%; margin: 0 auto;">
+    <h3 style="color: #333; text-align: left;">Cảm ơn ${data.shippingInfo.name} đã mua hàng tại mtshop.com.vn</h3>
+    <h4 style="color: #555; text-align: left; text-transform: uppercase; font-weight: bold;">Mã đơn hàng: <span style="color:blue;">${data._id}</span></h4>
+    <h4 style="color: #555; text-align: left;">Sản phẩm đã mua:</h4>
+    <table style="border-collapse: collapse; width: 95%; margin: 0 auto;">
       <thead>
         <tr>
           <th style="border: 1px solid #000; padding: 8px;">Tên sản phẩm</th>
+          <th style="border: 1px solid #000; padding: 8px;">Bộ nhớ</th>
+          <th style="border: 1px solid #000; padding: 8px;">Màu</th>
           <th style="border: 1px solid #000; padding: 8px;">Giá</th>
           <th style="border: 1px solid #000; padding: 8px;">Số lượng</th>
         </tr>
@@ -46,11 +51,11 @@ const sendEmailCreated = async (data) => {
       <tbody>
         ${tbodyContent} <!-- Thêm nội dung tbody đã tạo vào đây -->
       </tbody>
-    </table>
+      </table>
+    <h4 style="color: #444; text-align: left;">Ghi chú: <span style="font-style:italic;">${note}</span></h4>
     <h4 style="color: #444; text-align: left;">Phí giao hàng: ${data.deliveryCharges}đ</h4>
     <h4 style="color: #444; text-align: left;">Phương thức thanh toán: ${data.paymentMethod}</h4>
-    <h4 style="color: #444; text-align: left;">Ghi chú: ${data.note}</h4>
-    <h4 style="color: #444; text-align: left;">Tổng giá tiền: ${totalPrice}</h4>
+    <h4 style="color: #444; text-align: left;">Tổng giá tiền: <span style="color:red;">${totalPrice}</span></h4>
   `;
 
   // send mail with defined transport object

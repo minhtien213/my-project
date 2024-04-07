@@ -5,11 +5,6 @@ const { authMiddleware, authUserMiddleware } = require('../app/middlewares/authM
 
 router.post('/create-order/:id', orderController.createOrder);
 
-// router.put('/update-order/:id', authUserMiddleware, orderController.updateOrder);
-
-// router.delete('/remove-order/:id', authUserMiddleware, orderController.removeOrder);
-
-// router.get('/get-all', authMiddleware, orderController.getAllOrders);
-router.get('/get-detail/:id', orderController.getDetailOrder);
+router.get('/get-my-orders/:id', orderController.getMyOrders);
 
 module.exports = router;

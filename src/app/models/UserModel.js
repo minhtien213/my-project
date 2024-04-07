@@ -7,6 +7,8 @@ const userSchema = new Schema(
     cart: [
       {
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        color: { type: String, required: true },
+        memory: { type: String, required: true },
         quantity: { type: Number, default: 1 },
       },
     ],

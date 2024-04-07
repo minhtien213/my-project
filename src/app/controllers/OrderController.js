@@ -64,17 +64,17 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-//[GET] /get-detail/:id
-const getDetailOrder = async (req, res) => {
+//[GET] /get-my-orders/:id
+const getMyOrders = async (req, res) => {
+  const userId = req.params.id;
   try {
-    const orderId = req.query.orderId;
-    if (!orderId) {
+    if (!userId) {
       return res.status(404).json({
         status: 'ERR',
-        message: 'Order ID không được rỗng',
+        message: 'ID không được rỗng',
       });
     }
-    const response = await OrderServices.getDetailOrder(orderId);
+    const response = await OrderServices.getMyOrders(userId);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -88,5 +88,5 @@ module.exports = {
   updateOrder,
   removeOrder,
   getAllOrders,
-  getDetailOrder,
+  getMyOrders,
 };

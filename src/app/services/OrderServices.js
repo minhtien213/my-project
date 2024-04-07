@@ -96,23 +96,23 @@ const getAllOrders = () => {
 };
 
 //[GET] /get-detail/:id
-const getDetailOrder = (orderId) => {
+const getMyOrders = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const orderDetail = await Order.findOne({ _id: orderId }).populate({
+      const myOrders = await Order.find({ userId: userId }).populate({
         path: 'listOrder.productId',
         model: 'Product',
       });
-      if (orderDetail === null) {
+      if (myOrders === null) {
         resolve({
           status: 'ERR',
-          message: 'Đơn hàng không tồn tại',
+          message: 'Không có đơn hàng nào',
         });
       }
       resolve({
         status: 'OK',
-        message: 'Lấy đơn hàng thành công',
-        data: orderDetail,
+        message: 'Lấy tất cả đơn hàng thành công',
+        data: myOrders,
       });
     } catch (error) {
       reject(error);
@@ -125,5 +125,5 @@ module.exports = {
   updateOrder,
   removeOrder,
   getAllOrders,
-  getDetailOrder,
+  getMyOrders,
 };
