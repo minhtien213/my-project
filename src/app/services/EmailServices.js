@@ -20,7 +20,7 @@ const sendEmailCreated = async (data) => {
 
   // Duyệt qua danh sách sản phẩm và thêm mỗi sản phẩm vào tbody
   data.listOrder.forEach((order) => {
-    const price = convert_vnd_type(order.productId.price);
+    const price = convert_vnd_type(order.productId.prices[order.memory]);
     tbodyContent += `
       <tr>
         <td style="border: 1px solid #000; padding: 8px; text-align: center;">${order.productId.name}</td>

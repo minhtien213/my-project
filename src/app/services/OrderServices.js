@@ -3,6 +3,7 @@ const EmailServices = require('./EmailServices');
 
 //[POST] /order/create-order/:id
 const createOrder = (orderData) => {
+  // console.log(orderData);
   return new Promise(async (resolve, reject) => {
     try {
       const createdOrder = await Order.create(orderData);
