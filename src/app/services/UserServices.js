@@ -272,7 +272,6 @@ const getDetailUser = (userId) => {
 
 //[PUT] /user/add-cart
 const addCart = async (userId, data_add_cart) => {
-  console.log(data_add_cart);
   try {
     await User.findByIdAndUpdate(userId, {
       $push: {
