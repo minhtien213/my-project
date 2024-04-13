@@ -67,27 +67,15 @@ const getAllProducts = async (req, res) => {
 
 //[GET] /filter
 const filterProducts = async (req, res) => {
-  // try {
-  //   const { sort_field, sort_type, pageCurrent, pageSize } = req.query;
-  //   let { search_fields } = req.query;
-  //   // Kiểm tra nếu search_fields là một chuỗi, chuyển đổi nó thành một mảng gồm một phần tử duy nhất
-  //   if (typeof search_fields === 'string') {
-  //     search_fields = [search_fields];
-  //   }
-  //   // Gọi API filterProducts từ ProductServices với các tham số đã được chỉnh sửa
-  //   const response = await ProductServices.filterProducts({
-  //     sort_field,
-  //     sort_type,
-  //     search_fields,
-  //     pageCurrent,
-  //     pageSize
-  //   });
-  //   return res.status(200).json(response);
-  // } catch (error) {
-  //   return res.status(404).json({
-  //     message: error,
-  //   });
-  // }
+  try {
+    const { values, fields, pageSize, pageCurrent } = req.query;
+    const response = await ProductServices.filterProducts(req.query);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
 };
 
 //[GET] /get-detail
