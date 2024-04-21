@@ -8,7 +8,7 @@ mongoose.plugin(slug);
 const productSchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
-    images: [{ type: String, required: true }],
+    // images: [{ type: String, required: true }],
     type: { type: String, required: true, default: '' },
     colors: [{ type: String, required: true }],
     memorys: [{ type: String, required: true }],

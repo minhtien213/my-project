@@ -2,10 +2,10 @@ const ProductServices = require('../services/ProductServices');
 
 //[POST] /create
 const createProduct = async (req, res) => {
-  const { name, images, type, brand, price, quantity, rating, description } = req.body;
+  const { name, type, brand, prices, quantity, rating, description, colors, memorys } = req.body;
   try {
-    if (!name || !images || !type || !brand || !price || !quantity || !rating || !description) {
-      return res.status(200).json({ status: 'ERR', message: 'The input is required' });
+    if (!name || !type || !brand || !quantity || !rating || !description) {
+      return res.status(200).json({ status: 'ERR', message: 'Các trường không được để trống' });
     }
     const response = await ProductServices.createProduct(req.body);
     return res.status(200).json(response);
@@ -32,7 +32,7 @@ const updateProduct = async (req, res) => {
 
 //[DELETE] /delete/:id
 const deleteProduct = async (req, res) => {
-  const productId = req.params.id;
+  const productId = req.params.itemId;
   try {
     const response = await ProductServices.deleteProduct(productId);
     return res.status(200).json(response);

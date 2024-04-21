@@ -8,15 +8,15 @@ const createProduct = (newProduct) => {
       const checkProduct = await Product.findOne({ name: name });
       if (checkProduct !== null) {
         resolve({
-          status: 'OK',
-          message: 'The name is already',
+          status: 'ERR',
+          message: 'Tên sản phẩm đã tồn tại',
         });
       }
       const createdProduct = await Product.create(newProduct);
       if (createdProduct) {
         resolve({
           status: 'OK',
-          message: 'Success',
+          message: 'Thêm sản phẩm mới thành công',
           data: createdProduct,
         });
       }
@@ -63,7 +63,7 @@ const deleteProduct = (productId) => {
           message: 'The product is not exist',
         });
       }
-      await Product.findByIdAndDelete({ _id: productId });
+      await Product.findByIdAndDelete({ _id: productId }, { new: true });
       resolve({
         //OK? => return data
         status: 'OK',
@@ -102,10 +102,10 @@ const deleteManyProduct = (productIds) => {
 //[GET] /get-all
 const getAllProducts = (queryData) => {
   const {
-    search,
+    search = null,
     search_field = 'name',
     pageSize = 3,
-    pageCurrent = 1,
+    currentPage = 1,
     sort_field = 'name',
     sort_type = 'asc',
   } = queryData;
@@ -119,7 +119,7 @@ const getAllProducts = (queryData) => {
         Promise.all([
           Product.find({ [search_field]: { $regex: regex } })
             .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
-            .skip((pageCurrent - 1) * pageSize)
+            .skip((currentPage - 1) * pageSize)
             .limit(pageSize),
           Product.countDocuments({ [search_field]: { $regex: regex } }),
         ])
@@ -130,7 +130,7 @@ const getAllProducts = (queryData) => {
               message: 'Get products is success',
               totalProducts,
               totalPages: Math.ceil(totalProducts / pageSize),
-              pageCurrent,
+              currentPage,
               data: productAlls,
             });
           })
@@ -144,7 +144,7 @@ const getAllProducts = (queryData) => {
         Promise.all([
           Product.find({})
             .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
-            .skip((page - 1) * pageSize)
+            .skip((currentPage - 1) * pageSize)
             .limit(pageSize),
           Product.countDocuments({}),
         ])
@@ -173,7 +173,7 @@ const getAllProducts = (queryData) => {
 
 //[GET] /filter
 const filterProducts = (queryData) => {
-  const { values, fields, pageCurrent, pageSize } = queryData;
+  const { values, fields, currentPage, pageSize } = queryData;
 
   const searchConditions = [];
   // Tạo điều kiện tìm kiếm cho mỗi giá trị và trường
@@ -187,7 +187,7 @@ const filterProducts = (queryData) => {
       Promise.all([
         Product.find({ $and: searchConditions }) // Sử dụng $and để đảm bảo tất cả các điều kiện đều phải đúng
           // .sort({ [sort_field]: ['asc', 'desc'].includes(sort_type) ? sort_type : 'desc' })
-          .skip((pageCurrent - 1) * pageSize)
+          .skip((currentPage - 1) * pageSize)
           .limit(pageSize),
         Product.countDocuments({ $and: searchConditions }),
       ])
@@ -197,7 +197,7 @@ const filterProducts = (queryData) => {
             message: 'Get products is success',
             totalProducts,
             totalPages: Math.ceil(totalProducts / pageSize),
-            pageCurrent,
+            currentPage,
             data: productAlls,
           });
         })

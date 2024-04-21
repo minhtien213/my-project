@@ -26,7 +26,9 @@ const createComment = (newComment) => {
 const getComment = (productId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const comments = await Comment.find({ productId }).populate('userId');
+      const comments = await Comment.find({ productId })
+        .populate('userId')
+        .sort({ createdAt: 'desc' });
       if (comments) {
         resolve({
           status: 'OK',
