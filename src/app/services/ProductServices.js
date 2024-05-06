@@ -75,23 +75,23 @@ const deleteProduct = (productId) => {
   });
 };
 
-//[DELETE] /delete-many
-const deleteManyProduct = (productIds) => {
+//[DELETE] /delete-many/:id/:listItemId
+const deleteManyProducts = (listItemIds) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const checkProduct = await Product.find({ _id: productIds });
+      const checkProduct = await Product.find({ _id: listItemIds });
       if (checkProduct.length === 0) {
         //check product is existing
         resolve({
-          status: 'OK',
-          message: 'The product is not exist',
+          status: 'ERR',
+          message: 'Sản phẩm không tồn tại',
         });
       }
-      await Product.deleteMany({ _id: { $in: productIds } });
+      await Product.deleteMany({ _id: { $in: listItemIds } });
       resolve({
         //OK? => return data
         status: 'OK',
-        message: 'Delete success',
+        message: 'Đã xóa các sản phẩm đã chọn',
       });
     } catch (error) {
       reject(error);
@@ -240,7 +240,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
-  deleteManyProduct,
+  deleteManyProducts,
   getAllProducts,
   filterProducts,
   getDetailProduct,

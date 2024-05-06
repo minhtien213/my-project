@@ -41,11 +41,11 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-//[DELETE] /delete-many
-const deleteManyProduct = async (req, res) => {
-  const productIds = req.body;
+//[DELETE] /delete-many/:id/:listItemId
+const deleteManyProducts = async (req, res) => {
+  const listItemIds = req.params.listItemIds.split(',');
   try {
-    const response = await ProductServices.deleteManyProduct(productIds);
+    const response = await ProductServices.deleteManyProducts(listItemIds);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({ message: error });
@@ -101,7 +101,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
-  deleteManyProduct,
+  deleteManyProducts,
   getAllProducts,
   filterProducts,
   getDetailProduct,
